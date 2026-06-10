@@ -1,5 +1,62 @@
 // ===== PPL WORKOUT PRO - Main Application =====
 
+// ===== EXERCISE VIDEO DATABASE =====
+// YouTube video IDs for exercise demonstrations
+const EXERCISE_VIDEOS = {
+  'Barbell Bench Press': { videoId: 'rT7DgCr-3pg', tips: 'Keep feet flat, arch upper back slightly, lower bar to mid-chest. Drive through feet on the press.' },
+  'Incline Dumbbell Press': { videoId: 'SLOFBnMFWJQ', tips: 'Set bench to 30-45°. Lower dumbbells to chest level with elbows at 45°. Squeeze at the top.' },
+  'Overhead Press (Barbell)': { videoId: 'QAQ64hK4Xxs', tips: 'Brace core, press straight up. Move head through once bar passes forehead. Lock out at top.' },
+  'Dumbbell Lateral Raises': { videoId: '3VcKaXpzqRo', tips: 'Slight bend in elbows, raise to shoulder height. Control the negative. Lead with elbows, not hands.' },
+  'Cable Chest Flyes': { videoId: 'Iwe6AmxVf7o', tips: 'Set pulleys at chest height. Slight elbow bend, squeeze chest at center. Control the stretch.' },
+  'Tricep Rope Pushdowns': { videoId: '2-LAMcpzODU', tips: 'Keep elbows pinned to sides. Split rope at bottom for full contraction. Control the return.' },
+  'Overhead Tricep Extension': { videoId: '_gsUck-7M74', tips: 'Keep elbows close to head. Lower weight behind head, extend fully. Feel the stretch at bottom.' },
+  'Push-Ups (Burnout)': { videoId: 'IODxDxX7oi4', tips: 'Hands shoulder-width, core tight. Full range of motion. Go to failure with good form.' },
+  'Dumbbell Bench Press': { videoId: 'VmB1G1K7v94', tips: 'Full ROM advantage over barbell. Lower until stretch in chest, press up and slightly inward.' },
+  'Decline Barbell Press': { videoId: 'LfyQBUKR8SE', tips: 'Lower bar to lower chest. Keep wrists over elbows. Great for lower chest emphasis.' },
+  'Seated Dumbbell Shoulder Press': { videoId: 'qEwKCR5JCog', tips: 'Back supported, press up in slight arc. Dont lock elbows fully. Control the descent.' },
+  'Arnold Press': { videoId: '6Z15_WdXmVw', tips: 'Start with palms facing you, rotate as you press up. Full rotation at the top.' },
+  'Front Raises (Dumbbell)': { videoId: '-t7fuZ0KhDA', tips: 'Raise to eye level, dont swing. Alternate arms or both together. Control the negative.' },
+  'Pec Deck Machine': { videoId: 'Z57CtFmRMxA', tips: 'Align elbows with pads at chest height. Squeeze hard at center, stretch on return.' },
+  'Close-Grip Bench Press': { videoId: 'nEF0bv2FW94', tips: 'Hands shoulder-width apart. Tuck elbows close to body. Focus on tricep contraction.' },
+  'Diamond Push-Ups': { videoId: 'J0DnG1_S92I', tips: 'Hands together forming diamond shape. Keep elbows close. Great tricep finisher.' },
+  'Deadlift (Conventional)': { videoId: 'op9kVnSso6Q', tips: 'Hip-width stance, grip outside knees. Push floor away, keep bar close. Lockout with glutes.' },
+  'Pull-Ups / Lat Pulldown': { videoId: 'eGo4IYlbE5g', tips: 'Full dead hang to chin over bar. Initiate by pulling elbows down. Control the descent.' },
+  'Barbell Bent-Over Row': { videoId: 'FWJR5Ve8bnQ', tips: 'Hinge at hips 45°, pull bar to lower chest. Squeeze shoulder blades at top.' },
+  'Seated Cable Row': { videoId: 'GZbfZ033f74', tips: 'Sit tall, pull handle to lower chest. Squeeze back, control return. Dont lean too far.' },
+  'Face Pulls': { videoId: 'rep-qVOkqgk', tips: 'Set cable at face height. Pull to face, externally rotate at end. Great for rear delts and posture.' },
+  'Barbell Bicep Curls': { videoId: 'kwG2ipFRgFo', tips: 'Elbows at sides, full range. Squeeze at top, lower slowly. Dont swing the weight.' },
+  'Hammer Curls': { videoId: 'zC3nLlEvin4', tips: 'Neutral grip (palms facing each other). Targets brachialis and forearms. Keep elbows pinned.' },
+  'Reverse Flyes (Machine)': { videoId: 'IuzVpzmkwCs', tips: 'Chest on pad, arms extended. Squeeze rear delts at full extension. Control the weight.' },
+  'Rack Pulls': { videoId: 'V2lAm_QLRWU', tips: 'Set pins at knee height. Pull with back and traps. Great for upper back thickness.' },
+  'Chin-Ups (Weighted)': { videoId: 'brhRXlOhGQY', tips: 'Supinated grip (palms toward you). Pull chin over bar. Add weight when bodyweight is easy.' },
+  'Single-Arm Dumbbell Row': { videoId: 'pYcpY20QaE8', tips: 'Support with opposite hand. Pull elbow past torso. Squeeze lat at top. Full stretch at bottom.' },
+  'T-Bar Row': { videoId: 'j3Igk5nyZE4', tips: 'Straddle bar, chest up. Pull to chest, squeeze upper back. Keep lower back neutral.' },
+  'Straight-Arm Pulldown': { videoId: 'AjZpGJEgJzs', tips: 'Arms straight, slight elbow bend. Push bar down in arc. Feel lats stretch and contract.' },
+  'Face Pulls (Rope)': { videoId: 'rep-qVOkqgk', tips: 'High pull with external rotation at end. Great for rear delts and rotator cuff health.' },
+  'Incline Dumbbell Curls': { videoId: 'soxrZlIl35U', tips: 'Set bench at 45°. Let arms hang fully extended. Curl up, maximizes bicep stretch.' },
+  'Concentration Curls': { videoId: '0AUGkch3tzc', tips: 'Elbow braced against inner thigh. Full ROM, squeeze at top. Isolates bicep peak.' },
+  'Barbell Back Squat': { videoId: 'ultWZbUMPL8', tips: 'Bar on upper traps, feet shoulder-width. Break at hips first, depth to parallel or below.' },
+  'Romanian Deadlift': { videoId: '7j-2w4-P14I', tips: 'Slight knee bend, hinge at hips. Feel hamstring stretch. Bar stays close to legs.' },
+  'Leg Press': { videoId: 'IZxyjW7MPJQ', tips: 'Feet shoulder-width on platform. Lower until 90° at knees. Push through heels. Dont lock out.' },
+  'Walking Lunges': { videoId: 'L8fvypPH3Lc', tips: 'Long stride, front knee tracks over toes. Drive up through front heel. Keep torso upright.' },
+  'Leg Curls (Machine)': { videoId: '1Tq3QdYUuHs', tips: 'Pad above ankles, squeeze hamstrings at top. Control the negative. Full range of motion.' },
+  'Leg Extensions': { videoId: 'YyvSfVjQeL0', tips: 'Pad on lower shins, extend fully. Squeeze quads at top. Control descent. Dont go too heavy.' },
+  'Standing Calf Raises': { videoId: 'gwLzBJYoWlI', tips: 'Full stretch at bottom, squeeze at top. Pause at peak contraction. Control the negative.' },
+  'Hip Thrusts (Barbell)': { videoId: 'xDmFkJxPzeM', tips: 'Upper back on bench, bar on hips. Drive hips up, squeeze glutes at top. Chin tucked.' },
+  'Front Squat': { videoId: 'v-mQm_pH1Xo', tips: 'Clean grip or cross-arm. Elbows high, torso upright. More quad-dominant than back squat.' },
+  'Bulgarian Split Squats': { videoId: 'Foc_BBIeMk0', tips: 'Rear foot on bench. Lower until front thigh is parallel. Drive through front heel.' },
+  'Sumo Deadlift': { videoId: 'LGIS92h4FI0', tips: 'Wide stance, toes out. Grip inside knees. Push floor apart with feet. Keep chest up.' },
+  'Hack Squat Machine': { videoId: 'EdtaJRBqwes', tips: 'Feet shoulder-width, lower portion of platform. Deep ROM, push through heels.' },
+  'Glute-Ham Raise': { videoId: 'lT4YBLk0T2M', tips: 'Control the descent using hamstrings. Push against pad to return up. Advanced movement.' },
+  'Single-Leg Press': { videoId: 'c2GMvg67gbY', tips: 'One leg at a time for imbalance correction. Same form as regular leg press. Full ROM.' },
+  'Seated Calf Raises': { videoId: 'JbyjNymZOt0', tips: 'Targets the soleus. Full stretch at bottom, hold squeeze at top for 1-2 seconds.' },
+  'Cable Pull-Through': { videoId: 'MBcMeHApFkg', tips: 'Cable between legs, hinge at hips. Squeeze glutes to stand tall. Keep arms straight.' },
+  'Brisk Walking (Incline)': { videoId: 'nN4gEzfPa6s', tips: 'Set treadmill to 10-15% incline. Walk at brisk pace. Great low-impact cardio for recovery.' },
+  'Foam Rolling (Full Body)': { videoId: 'MfWubSAMv4c', tips: 'Roll each muscle group 30-60s. Pause on tight spots. Breathe deeply and relax into it.' },
+  'Dynamic Stretching': { videoId: 'nPHfEnZD1Wk', tips: 'Leg swings, arm circles, hip circles. Move through full range. Great for warming up.' },
+  'Light Cycling': { videoId: 'NH2bGBKHL4A', tips: 'Low resistance, moderate cadence (70-80 RPM). Keep heart rate in zone 1-2. Focus on recovery.' }
+};
+
 // ===== WORKOUT DATA =====
 const WORKOUTS = {
   push: {
@@ -379,17 +436,68 @@ function openWorkout(workoutId) {
   `;
 
   document.getElementById('exerciseList').innerHTML = workout.exercises.map((ex, i) => `
-    <div class="exercise-card">
+    <div class="exercise-card clickable" onclick="showExerciseVideo('${ex.name.replace(/'/g, "\\'")}', '${ex.muscle}', '${ex.sets}', '${ex.reps}', '${ex.rest}')">
       <div class="exercise-num">${i + 1}</div>
       <div class="exercise-info">
         <h4>${ex.name}</h4>
         <p class="exercise-detail">${ex.sets} sets × ${ex.reps} • Rest ${ex.rest}s</p>
       </div>
-      <span class="exercise-muscle">${ex.muscle}</span>
+      <i class="fas fa-play-circle play-hint"></i>
     </div>
   `).join('');
 
   navigateTo('workout');
+}
+
+// ===== EXERCISE VIDEO MODAL =====
+function showExerciseVideo(name, muscle, sets, reps, rest) {
+  const modal = document.getElementById('exerciseModal');
+  const videoContainer = document.getElementById('exerciseVideoContainer');
+  const infoContainer = document.getElementById('exerciseModalInfo');
+
+  const exerciseData = EXERCISE_VIDEOS[name];
+  
+  if (exerciseData && exerciseData.videoId) {
+    videoContainer.innerHTML = `
+      <iframe 
+        src="https://www.youtube.com/embed/${exerciseData.videoId}?rel=0&modestbranding=1&playsinline=1" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+      </iframe>
+    `;
+  } else {
+    videoContainer.innerHTML = `
+      <div class="video-placeholder">
+        <i class="fas fa-dumbbell"></i>
+        <span>Demo coming soon</span>
+      </div>
+    `;
+  }
+
+  infoContainer.innerHTML = `
+    <h3>${name}</h3>
+    <span class="modal-muscle">${muscle}</span>
+    <div class="modal-details">
+      <span><strong>${sets}</strong> sets</span>
+      <span><strong>${reps}</strong> reps</span>
+      <span><strong>${rest}s</strong> rest</span>
+    </div>
+    ${exerciseData && exerciseData.tips ? `
+      <div class="modal-tips">
+        <strong>Tips</strong>
+        ${exerciseData.tips}
+      </div>
+    ` : ''}
+  `;
+
+  modal.classList.remove('hidden');
+}
+
+function closeExerciseModal() {
+  const modal = document.getElementById('exerciseModal');
+  // Stop video playback by clearing iframe
+  document.getElementById('exerciseVideoContainer').innerHTML = '';
+  modal.classList.add('hidden');
 }
 
 // ===== ACTIVE WORKOUT =====
@@ -664,6 +772,12 @@ function setupEventListeners() {
 
   // Custom modal close
   document.getElementById('btnCustomClose').addEventListener('click', closeCustomModal);
+
+  // Exercise video modal close
+  document.getElementById('btnCloseExercise').addEventListener('click', closeExerciseModal);
+  document.getElementById('exerciseModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('exerciseModal')) closeExerciseModal();
+  });
 
   // Settings
   document.getElementById('restTimer').addEventListener('change', (e) => {
