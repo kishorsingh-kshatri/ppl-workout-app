@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#e94560">
+  <title>PPL Workout Pro</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Splash Screen -->
+  <div id="splash" class="splash">
+    <div class="splash-content">
+      <i class="fas fa-dumbbell splash-icon"></i>
+      <h1>PPL Pro</h1>
+      <p>Push • Pull • Legs</p>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="app hidden">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <h1 class="header-title">PPL Pro</h1>
+      </div>
+      <div class="header-right">
+        <button class="btn-icon" id="btnStats"><i class="fas fa-chart-bar"></i></button>
+        <button class="btn-icon" id="btnSettings"><i class="fas fa-cog"></i></button>
+      </div>
+    </header>
+
+    <!-- Pages -->
+    <main class="main-content">
+      <!-- Home / Schedule Page -->
+      <section id="page-home" class="page active">
+        <div class="week-overview">
+          <h2 class="section-title">This Week's Plan</h2>
+          <div class="week-days" id="weekDays"></div>
+        </div>
+        <div class="today-workout" id="todayWorkout"></div>
+      </section>
+
+      <!-- Workout Detail Page -->
+      <section id="page-workout" class="page">
+        <div class="workout-header" id="workoutHeader"></div>
+        <div class="exercise-list" id="exerciseList"></div>
+        <button class="btn-start-workout" id="btnStartWorkout">
+          <i class="fas fa-play"></i> Start Workout
+        </button>
+      </section>
+
+      <!-- Active Workout Page -->
+      <section id="page-active" class="page">
+        <div class="active-header">
+          <div class="workout-timer" id="workoutTimer">00:00</div>
+          <button class="btn-finish" id="btnFinishWorkout">Finish</button>
+        </div>
+        <div class="active-exercises" id="activeExercises"></div>
+      </section>
+
+      <!-- Stats Page -->
+      <section id="page-stats" class="page">
+        <h2 class="section-title">Your Progress</h2>
+        <div class="stats-grid" id="statsGrid"></div>
+        <div class="history-list" id="historyList"></div>
+      </section>
+
+      <!-- Settings Page -->
+      <section id="page-settings" class="page">
+        <h2 class="section-title">Settings</h2>
+        <div class="settings-list">
+          <div class="setting-item">
+            <span>Rest Timer (seconds)</span>
+            <input type="number" id="restTimer" value="90" min="30" max="300" step="15">
+          </div>
+          <div class="setting-item">
+            <span>Week Start Day</span>
+            <select id="weekStart">
+              <option value="1">Monday</option>
+              <option value="0">Sunday</option>
+            </select>
+          </div>
+          <div class="setting-item">
+            <label class="toggle-label">
+              <span>Dark Mode</span>
+              <input type="checkbox" id="darkMode" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <button class="btn-danger" id="btnResetData">Reset All Data</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-page="home">
+        <i class="fas fa-calendar-week"></i>
+        <span>Schedule</span>
+      </button>
+      <button class="nav-item" data-page="workout">
+        <i class="fas fa-dumbbell"></i>
+        <span>Workouts</span>
+      </button>
+      <button class="nav-item" data-page="stats">
+        <i class="fas fa-chart-line"></i>
+        <span>Progress</span>
+      </button>
+      <button class="nav-item" data-page="settings">
+        <i class="fas fa-user-cog"></i>
+        <span>Settings</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Rest Timer Modal -->
+  <div id="restModal" class="modal hidden">
+    <div class="modal-content rest-timer-modal">
+      <div class="rest-circle">
+        <svg viewBox="0 0 100 100">
+          <circle class="rest-bg" cx="50" cy="50" r="45"/>
+          <circle class="rest-progress" cx="50" cy="50" r="45" id="restCircle"/>
+        </svg>
+        <span class="rest-time" id="restTimeDisplay">90</span>
+      </div>
+      <p>Rest Time</p>
+      <button class="btn-skip" id="btnSkipRest">Skip</button>
+    </div>
+  </div>
+
+  <!-- Workout Complete Modal -->
+  <div id="completeModal" class="modal hidden">
+    <div class="modal-content complete-modal">
+      <i class="fas fa-trophy complete-icon"></i>
+      <h2>Workout Complete!</h2>
+      <div class="complete-stats" id="completeStats"></div>
+      <button class="btn-primary" id="btnCompleteClose">Done</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
