@@ -1,9 +1,10 @@
-const CACHE_NAME = 'ppl-workout-v1';
+const CACHE_NAME = 'ppl-workout-v2';
 const urlsToCache = [
   '/',
   '/index.html',
   '/styles.css',
   '/app.js',
+  '/animations.js',
   '/manifest.json'
 ];
 

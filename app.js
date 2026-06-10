@@ -457,22 +457,8 @@ function showExerciseVideo(name, muscle, sets, reps, rest) {
 
   const exerciseData = EXERCISE_VIDEOS[name];
   
-  if (exerciseData && exerciseData.videoId) {
-    videoContainer.innerHTML = `
-      <iframe 
-        src="https://www.youtube.com/embed/${exerciseData.videoId}?rel=0&modestbranding=1&playsinline=1" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-        allowfullscreen>
-      </iframe>
-    `;
-  } else {
-    videoContainer.innerHTML = `
-      <div class="video-placeholder">
-        <i class="fas fa-dumbbell"></i>
-        <span>Demo coming soon</span>
-      </div>
-    `;
-  }
+  // Use animated SVG instead of YouTube
+  videoContainer.innerHTML = getExerciseAnimation(name);
 
   infoContainer.innerHTML = `
     <h3>${name}</h3>
@@ -484,7 +470,7 @@ function showExerciseVideo(name, muscle, sets, reps, rest) {
     </div>
     ${exerciseData && exerciseData.tips ? `
       <div class="modal-tips">
-        <strong>Tips</strong>
+        <strong>Form Tips</strong>
         ${exerciseData.tips}
       </div>
     ` : ''}
@@ -495,7 +481,6 @@ function showExerciseVideo(name, muscle, sets, reps, rest) {
 
 function closeExerciseModal() {
   const modal = document.getElementById('exerciseModal');
-  // Stop video playback by clearing iframe
   document.getElementById('exerciseVideoContainer').innerHTML = '';
   modal.classList.add('hidden');
 }
