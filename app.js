@@ -145,6 +145,7 @@ let state = {
   timerInterval: null,
   restInterval: null,
   workoutStartTime: null,
+  weekOffset: 0, // 0 = current week, -1 = previous, +1 = next
   settings: {
     restTimer: 90,
     weekStart: 1,
@@ -169,6 +170,7 @@ function initApp() {
 
   renderWeekDays();
   renderTodayWorkout();
+  renderCustomWorkoutGrid();
   renderStats();
   setupEventListeners();
   registerServiceWorker();
@@ -213,11 +215,24 @@ function navigateTo(page) {
 // ===== RENDER FUNCTIONS =====
 function renderWeekDays() {
   const container = document.getElementById('weekDays');
-  const today = new Date().getDay(); // 0=Sun, 1=Mon...
-  const todayIdx = today === 0 ? 6 : today - 1; // Convert to Mon=0 index
+  const today = new Date();
+  const todayDay = today.getDay();
+  const todayIdx = todayDay === 0 ? 6 : todayDay - 1;
+
+  // Update week title
+  const weekMonday = getMondayOfWeek(state.weekOffset);
+  const weekSunday = new Date(weekMonday);
+  weekSunday.setDate(weekMonday.getDate() + 6);
+  const titleEl = document.getElementById('weekTitle');
+  if (state.weekOffset === 0) {
+    titleEl.textContent = 'This Week';
+  } else {
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    titleEl.textContent = `${monthNames[weekMonday.getMonth()]} ${weekMonday.getDate()} - ${monthNames[weekSunday.getMonth()]} ${weekSunday.getDate()}`;
+  }
 
   container.innerHTML = WEEKLY_SCHEDULE.map((day, idx) => {
-    const isToday = idx === todayIdx;
+    const isToday = (state.weekOffset === 0 && idx === todayIdx);
     const dateObj = getDateForDayIndex(idx);
     const dateStr = dateObj.toISOString().split('T')[0];
     const isCompleted = state.completedDays.includes(dateStr);
@@ -233,15 +248,25 @@ function renderWeekDays() {
   }).join('');
 }
 
-function getDateForDayIndex(idx) {
+function getMondayOfWeek(offset) {
   const today = new Date();
   const currentDay = today.getDay();
   const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay;
   const monday = new Date(today);
-  monday.setDate(today.getDate() + mondayOffset);
+  monday.setDate(today.getDate() + mondayOffset + (offset * 7));
+  return monday;
+}
+
+function getDateForDayIndex(idx) {
+  const monday = getMondayOfWeek(state.weekOffset);
   const date = new Date(monday);
   date.setDate(monday.getDate() + idx);
   return date;
+}
+
+function changeWeek(direction) {
+  state.weekOffset += direction;
+  renderWeekDays();
 }
 
 function renderTodayWorkout() {
@@ -288,6 +313,58 @@ function renderTodayWorkout() {
       </div>
     </div>
   `;
+}
+
+// ===== CUSTOM WORKOUT PICKER =====
+function renderCustomWorkoutGrid() {
+  const container = document.getElementById('customWorkoutGrid');
+  container.innerHTML = `
+    <button class="custom-btn push-btn" onclick="showCustomOptions('push')">
+      <i class="fas fa-hand-fist"></i>
+      <span>Push</span>
+    </button>
+    <button class="custom-btn pull-btn" onclick="showCustomOptions('pull')">
+      <i class="fas fa-arrow-up"></i>
+      <span>Pull</span>
+    </button>
+    <button class="custom-btn legs-btn" onclick="showCustomOptions('legs')">
+      <i class="fas fa-person-walking"></i>
+      <span>Legs</span>
+    </button>
+  `;
+}
+
+function showCustomOptions(type) {
+  const modal = document.getElementById('customModal');
+  const optionsContainer = document.getElementById('customModalOptions');
+  
+  const workoutMap = {
+    push: ['push', 'push2'],
+    pull: ['pull', 'pull2'],
+    legs: ['legs', 'legs2']
+  };
+
+  const ids = workoutMap[type];
+  optionsContainer.innerHTML = ids.map(id => {
+    const w = WORKOUTS[id];
+    return `
+      <button class="custom-option-btn" onclick="selectCustomWorkout('${id}')">
+        ${w.name}
+        <span class="option-sub">${w.muscles} • ${w.exercises.length} exercises</span>
+      </button>
+    `;
+  }).join('');
+
+  modal.classList.remove('hidden');
+}
+
+function selectCustomWorkout(workoutId) {
+  document.getElementById('customModal').classList.add('hidden');
+  openWorkout(workoutId);
+}
+
+function closeCustomModal() {
+  document.getElementById('customModal').classList.add('hidden');
 }
 
 function openWorkout(workoutId) {
@@ -558,6 +635,10 @@ function setupEventListeners() {
     });
   });
 
+  // Week navigation
+  document.getElementById('btnPrevWeek').addEventListener('click', () => changeWeek(-1));
+  document.getElementById('btnNextWeek').addEventListener('click', () => changeWeek(1));
+
   // Header buttons
   document.getElementById('btnStats').addEventListener('click', () => {
     renderStats();
@@ -580,6 +661,9 @@ function setupEventListeners() {
 
   // Complete modal close
   document.getElementById('btnCompleteClose').addEventListener('click', closeComplete);
+
+  // Custom modal close
+  document.getElementById('btnCustomClose').addEventListener('click', closeCustomModal);
 
   // Settings
   document.getElementById('restTimer').addEventListener('change', (e) => {

@@ -41,10 +41,21 @@
       <!-- Home / Schedule Page -->
       <section id="page-home" class="page active">
         <div class="week-overview">
-          <h2 class="section-title">This Week's Plan</h2>
+          <div class="week-header">
+            <button class="btn-week-nav" id="btnPrevWeek"><i class="fas fa-chevron-left"></i></button>
+            <h2 class="section-title" id="weekTitle">This Week</h2>
+            <button class="btn-week-nav" id="btnNextWeek"><i class="fas fa-chevron-right"></i></button>
+          </div>
           <div class="week-days" id="weekDays"></div>
         </div>
         <div class="today-workout" id="todayWorkout"></div>
+        
+        <!-- Custom Workout Picker -->
+        <div class="custom-workout-section">
+          <h2 class="section-title">Quick Start</h2>
+          <p class="section-subtitle">Choose any workout to start now</p>
+          <div class="custom-workout-grid" id="customWorkoutGrid"></div>
+        </div>
       </section>
 
       <!-- Workout Detail Page -->
@@ -144,6 +155,15 @@
       <h2>Workout Complete!</h2>
       <div class="complete-stats" id="completeStats"></div>
       <button class="btn-primary" id="btnCompleteClose">Done</button>
+    </div>
+  </div>
+
+  <!-- Custom Workout Selection Modal -->
+  <div id="customModal" class="modal hidden">
+    <div class="modal-content">
+      <h2 style="margin-bottom:1rem">Choose Variation</h2>
+      <div id="customModalOptions"></div>
+      <button class="btn-skip" id="btnCustomClose" style="margin-top:1rem">Cancel</button>
     </div>
   </div>
 
